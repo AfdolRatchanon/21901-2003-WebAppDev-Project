@@ -1,0 +1,11 @@
+/* 21901-2003 — ระบบเบิก-จ่ายอุปกรณ์ไอที */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ตั้งค่า Font ภาษาไทย */
+@layer base {
+  body {
+    font-family: 'Sarabun', 'Segoe UI', system-ui, sans-serif;
+  }
+}

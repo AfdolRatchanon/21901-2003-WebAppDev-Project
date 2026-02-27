@@ -1,0 +1,47 @@
+// Prisma Schema — ระบบเบิก-จ่ายอุปกรณ์ไอที
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("student") // admin | teacher | student
+  createdAt DateTime @default(now())
+
+  borrows BorrowRecord[]
+}
+
+model Equipment {
+  id         Int      @id @default(autoincrement())
+  name       String
+  category   String
+  serialNo   String   @unique
+  status     String   @default("available") // available | borrowed | maintenance
+  borrowedBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  borrows BorrowRecord[]
+}
+
+model BorrowRecord {
+  id             Int       @id @default(autoincrement())
+  equipmentId    Int
+  userId         Int
+  purpose        String
+  borrowedAt     DateTime  @default(now())
+  expectedReturn DateTime
+  returnedAt     DateTime?
+
+  equipment Equipment @relation(fields: [equipmentId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+}

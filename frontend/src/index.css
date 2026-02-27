@@ -1,11 +1,15 @@
 /* 21901-2003 — ระบบเบิก-จ่ายอุปกรณ์ไอที */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-/* ตั้งค่า Font ภาษาไทย */
+/* ตั้งค่า Font ภาษาไทยและสีพื้นหลัง */
+@theme {
+  --font-sans: 'Sarabun', 'Segoe UI', system-ui, sans-serif;
+}
+
 @layer base {
   body {
-    font-family: 'Sarabun', 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--color-slate-100);
+    font-family: var(--font-sans);
   }
 }

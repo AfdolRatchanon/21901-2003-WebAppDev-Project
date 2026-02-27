@@ -39,27 +39,13 @@ export function Navbar({ auth }: NavbarProps) {
 
         {/* Navigation Links */}
         <div className="flex gap-1 flex-1">
-          <Link
-            to="/"
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-              isActive('/')
-                ? 'text-white bg-white/15'
-                : 'text-slate-400 hover:text-white hover:bg-white/10'
-            }`}
-          >
+          <Link to="/" className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${isActive('/') ? 'text-white bg-white/15' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}>
             อุปกรณ์
           </Link>
 
           {/* เมนู "จัดการ" แสดงเฉพาะ admin และ teacher */}
           {(role === 'admin' || role === 'teacher') && (
-            <Link
-              to="/admin"
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                isActive('/admin')
-                  ? 'text-white bg-white/15'
-                  : 'text-slate-400 hover:text-white hover:bg-white/10'
-              }`}
-            >
+            <Link to="/admin" className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${isActive('/admin') ? 'text-white bg-white/15' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}>
               จัดการ
             </Link>
           )}
@@ -68,7 +54,7 @@ export function Navbar({ auth }: NavbarProps) {
         {/* User Info + Logout */}
         <div className="flex items-center gap-3 shrink-0">
           {/* ชื่อและ role badge */}
-          <div className="flex flex-col items-end gap-0.5 hidden sm:flex">
+          <div className="hidden sm:flex flex-col items-end gap-0.5">
             <span className="text-slate-100 text-sm font-semibold leading-none">
               {auth.user?.name}
             </span>

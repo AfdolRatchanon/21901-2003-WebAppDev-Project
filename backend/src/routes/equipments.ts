@@ -32,7 +32,7 @@ export function createEquipmentRouter(io: SocketIOServer) {
   router.post('/', requireAuth, requireRole('admin', 'teacher'), async (req, res) => {
     const parsed = createSchema.safeParse(req.body)
     if (!parsed.success) {
-      res.status(400).json({ success: false, message: parsed.error.errors[0].message })
+      res.status(400).json({ success: false, message: parsed.error.issues[0].message })
       return
     }
 
@@ -42,7 +42,7 @@ export function createEquipmentRouter(io: SocketIOServer) {
 
   // PATCH /api/equipments/:id — อัปเดต status + emit real-time
   router.patch('/:id', requireAuth, async (req, res) => {
-    const id = parseInt(req.params.id)
+    const id = parseInt(String(req.params.id))
     const parsed = updateStatusSchema.safeParse(req.body)
 
     if (isNaN(id) || !parsed.success) {
@@ -67,7 +67,7 @@ export function createEquipmentRouter(io: SocketIOServer) {
 
   // DELETE /api/equipments/:id — เฉพาะ admin
   router.delete('/:id', requireAuth, requireRole('admin'), async (req, res) => {
-    const id = parseInt(req.params.id)
+    const id = parseInt(String(req.params.id))
 
     if (isNaN(id)) {
       res.status(400).json({ success: false, message: 'ID ไม่ถูกต้อง' })

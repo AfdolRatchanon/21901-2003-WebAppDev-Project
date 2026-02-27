@@ -19,7 +19,7 @@ router.post('/login', async (req, res) => {
   if (!parsed.success) {
     res.status(400).json({
       success: false,
-      message: parsed.error.errors[0].message,
+      message: parsed.error.issues[0].message,
     })
     return
   }

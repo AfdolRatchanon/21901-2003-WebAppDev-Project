@@ -15,20 +15,11 @@ const statusLabel = {
   maintenance: 'ซ่อมบำรุง',
 }
 
-// Tailwind classes สำหรับแต่ละสถานะ (border + badge)
+// สีขอบซ้ายและ badge ของแต่ละสถานะ
 const statusConfig = {
-  available: {
-    border: 'border-l-green-500',
-    badge: 'bg-green-100 text-green-700',
-  },
-  borrowed: {
-    border: 'border-l-red-500',
-    badge: 'bg-red-100 text-red-700',
-  },
-  maintenance: {
-    border: 'border-l-amber-500',
-    badge: 'bg-amber-100 text-amber-700',
-  },
+  available:   { border: 'border-l-green-500', badge: 'bg-green-100 text-green-700' },
+  borrowed:    { border: 'border-l-red-500',   badge: 'bg-red-100 text-red-700'     },
+  maintenance: { border: 'border-l-yellow-500', badge: 'bg-yellow-100 text-yellow-700' },
 }
 
 export function EquipmentPage({ auth }: EquipmentPageProps) {
@@ -58,14 +49,8 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
 
   // ยืมอุปกรณ์ — PATCH status = 'borrowed'
   async function handleBorrow(equipmentId: number) {
-    if (!purpose.trim()) {
-      setActionError('กรุณาระบุวัตถุประสงค์การใช้งาน')
-      return
-    }
-    if (!expectedReturn) {
-      setActionError('กรุณาเลือกวันที่คาดว่าจะคืน')
-      return
-    }
+    if (!purpose.trim()) { setActionError('กรุณาระบุวัตถุประสงค์การใช้งาน'); return }
+    if (!expectedReturn) { setActionError('กรุณาเลือกวันที่คาดว่าจะคืน'); return }
     try {
       await updateEquipmentStatus(equipmentId, 'borrowed', auth.user?.name ?? '')
       setBorrowingId(null)
@@ -90,39 +75,26 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
   const isAdminOrTeacher = auth.user?.role === 'admin' || auth.user?.role === 'teacher'
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-8">
+    <main className="max-w-5xl mx-auto px-4 py-6">
 
       {/* Page Header */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-800">รายการอุปกรณ์</h1>
-
-        {/* Real-time connection indicator */}
-        <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${
-          isConnected
-            ? 'bg-green-100 text-green-700'
-            : 'bg-red-100 text-red-600'
-        }`}>
-          {isConnected ? '● เชื่อมต่อแล้ว (Real-time)' : '○ ออฟไลน์'}
+        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${isConnected ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+          {isConnected ? '● Real-time' : '○ ออฟไลน์'}
         </span>
       </div>
 
-      {/* Action Error Alert */}
+      {/* Error Alert */}
       {actionError && (
-        <div className="flex items-center justify-between bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+        <div className="flex justify-between bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg mb-4">
           <span>{actionError}</span>
-          <button onClick={() => setActionError(null)} className="ml-3 text-red-400 hover:text-red-700">✕</button>
+          <button onClick={() => setActionError(null)}>✕</button>
         </div>
       )}
 
-      {/* Loading State */}
-      {isLoading && (
-        <p className="text-center text-slate-400 py-16">กำลังโหลดข้อมูล...</p>
-      )}
-
-      {/* Fetch Error */}
-      {error && (
-        <p className="text-center text-red-600 bg-red-50 rounded-lg px-4 py-3 mb-4">{error}</p>
-      )}
+      {isLoading && <p className="text-center text-slate-400 py-16">กำลังโหลดข้อมูล...</p>}
+      {error     && <p className="text-center text-red-500 py-4">{error}</p>}
 
       {/* Equipment Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -130,14 +102,12 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
           const config = statusConfig[eq.status]
 
           return (
-            <div
-              key={eq.id}
-              className={`bg-white rounded-xl border border-slate-200 border-l-4 ${config.border} p-4 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all`}
-            >
-              {/* Card Header: ชื่อ + status badge */}
+            <div key={eq.id} className={`bg-white rounded-xl border border-slate-200 border-l-4 ${config.border} p-4`}>
+
+              {/* ชื่อ + status badge */}
               <div className="flex justify-between items-start gap-2 mb-1">
-                <span className="font-bold text-slate-800 text-sm leading-snug">{eq.name}</span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 uppercase tracking-wide ${config.badge}`}>
+                <span className="font-bold text-slate-800 text-sm">{eq.name}</span>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${config.badge}`}>
                   {statusLabel[eq.status]}
                 </span>
               </div>
@@ -148,33 +118,24 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
                 <p className="text-xs text-red-500 font-semibold mb-2">ยืมโดย: {eq.borrowedBy}</p>
               )}
 
-              {/* Borrow Form (inline — แสดงเมื่อกดยืม) */}
+              {/* Borrow Form (inline) */}
               {borrowingId === eq.id ? (
-                <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-dashed border-slate-300 flex flex-col gap-2">
+                <div className="mt-3 bg-slate-50 rounded-lg border border-slate-200 p-3 flex flex-col gap-2">
                   <input
-                    type="text"
-                    placeholder="วัตถุประสงค์การใช้งาน"
-                    value={purpose}
-                    onChange={e => setPurpose(e.target.value)}
-                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    type="text" placeholder="วัตถุประสงค์การใช้งาน"
+                    value={purpose} onChange={e => setPurpose(e.target.value)}
+                    className="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                   <input
-                    type="date"
-                    value={expectedReturn}
+                    type="date" value={expectedReturn}
                     onChange={e => setExpectedReturn(e.target.value)}
-                    className="border border-slate-300 rounded-md px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleBorrow(eq.id)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => handleBorrow(eq.id)} className="bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
                       ยืนยัน
                     </button>
-                    <button
-                      onClick={() => { setBorrowingId(null); setPurpose(''); setExpectedReturn('') }}
-                      className="border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => { setBorrowingId(null); setPurpose(''); setExpectedReturn('') }} className="border border-slate-300 text-slate-600 text-xs px-3 py-1.5 rounded-lg">
                       ยกเลิก
                     </button>
                   </div>
@@ -182,40 +143,28 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
               ) : (
                 <div className="flex gap-2 flex-wrap mt-3">
 
-                  {/* ปุ่มยืม — เฉพาะอุปกรณ์ที่ว่าง */}
+                  {/* ปุ่มยืม */}
                   {eq.status === 'available' && (
-                    <button
-                      onClick={() => { setBorrowingId(eq.id); setActionError(null) }}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => { setBorrowingId(eq.id); setActionError(null) }} className="bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
                       ยืมอุปกรณ์
                     </button>
                   )}
 
-                  {/* ปุ่มคืน — เฉพาะอุปกรณ์ที่ถูกยืม */}
+                  {/* ปุ่มคืน */}
                   {eq.status === 'borrowed' && (
-                    <button
-                      onClick={() => handleReturn(eq.id)}
-                      className="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => handleReturn(eq.id)} className="bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
                       คืนอุปกรณ์
                     </button>
                   )}
 
-                  {/* admin/teacher: เปลี่ยนสถานะเป็นซ่อมบำรุง */}
+                  {/* admin/teacher: ซ่อมบำรุง */}
                   {isAdminOrTeacher && eq.status === 'available' && (
-                    <button
-                      onClick={() => updateEquipmentStatus(eq.id, 'maintenance').then(refetch)}
-                      className="border border-amber-400 text-amber-600 hover:bg-amber-50 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => updateEquipmentStatus(eq.id, 'maintenance').then(refetch)} className="border border-yellow-400 text-yellow-600 text-xs px-3 py-1.5 rounded-lg">
                       ซ่อมบำรุง
                     </button>
                   )}
                   {isAdminOrTeacher && eq.status === 'maintenance' && (
-                    <button
-                      onClick={() => updateEquipmentStatus(eq.id, 'available').then(refetch)}
-                      className="border border-green-400 text-green-600 hover:bg-green-50 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
-                    >
+                    <button onClick={() => updateEquipmentStatus(eq.id, 'available').then(refetch)} className="bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
                       พร้อมใช้งาน
                     </button>
                   )}
@@ -227,7 +176,6 @@ export function EquipmentPage({ auth }: EquipmentPageProps) {
         })}
       </div>
 
-      {/* Empty State */}
       {!isLoading && equipments.length === 0 && (
         <p className="text-center text-slate-400 py-16">ยังไม่มีอุปกรณ์ในระบบ</p>
       )}

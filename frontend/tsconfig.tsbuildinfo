@@ -1,1 +1,21 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/api/authapi.ts","./src/api/config.ts","./src/api/equipmentapi.ts","./src/components/navbar.tsx","./src/components/protectedroute.tsx","./src/hooks/useauth.ts","./src/hooks/useequipmentrealtime.ts","./src/hooks/useequipments.ts","./src/pages/adminpage.tsx","./src/pages/equipmentpage.tsx","./src/pages/loginpage.tsx","./src/types/index.ts"],"version":"5.6.3"}
+{
+    "root": [
+        "./src/app.tsx",
+        "./src/main.tsx",
+        "./src/vite-env.d.ts",
+        "./src/api/authapi.ts",
+        "./src/api/config.ts",
+        "./src/api/equipmentapi.ts",
+        "./src/components/navbar.tsx",
+        "./src/components/protectedroute.tsx",
+        "./src/hooks/useauth.ts",
+        "./src/hooks/useequipmentrealtime.ts",
+        "./src/hooks/useequipments.ts",
+        "./src/lib/cookie.ts",
+        "./src/pages/adminpage.tsx",
+        "./src/pages/equipmentpage.tsx",
+        "./src/pages/loginpage.tsx",
+        "./src/types/index.ts"
+    ],
+    "version": "5.6.3"
+}

@@ -1,12 +1,12 @@
 // Prisma Schema — ระบบเบิก-จ่ายอุปกรณ์ไอที
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model User {

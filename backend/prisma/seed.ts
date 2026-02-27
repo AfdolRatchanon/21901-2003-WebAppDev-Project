@@ -1,7 +1,19 @@
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { PrismaMariaDb } from '@prisma/adapter-mariadb'
+import { PrismaClient } from '../generated/prisma/client'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+const url = process.env.DATABASE_URL ?? 'mysql://root:@localhost:3306/equipment_db'
+const parsed = new URL(url)
+const adapter = new PrismaMariaDb({
+  host: parsed.hostname,
+  port: Number(parsed.port) || 3306,
+  user: parsed.username || 'root',
+  password: parsed.password || '',
+  database: parsed.pathname.slice(1),
+  connectionLimit: 5,
+})
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('🌱 Seeding database...')

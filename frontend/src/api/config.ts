@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getCookie, deleteCookie } from '../lib/cookie'
 
 // Base URL จาก environment variable
 // Development: http://localhost:3000 (proxied via vite.config.ts)
@@ -12,21 +13,22 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Interceptor: แนบ JWT token ทุก request อัตโนมัติ
+// Interceptor: แนบ JWT token จาก Cookie ทุก request อัตโนมัติ
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = getCookie('auth_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
 
-// Interceptor: จัดการ 401 Unauthorized → redirect ไป login
+// Interceptor: จัดการ 401 Unauthorized → ลบ Cookie แล้ว redirect ไป login
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
+      deleteCookie('auth_token')
+      deleteCookie('auth_user')
       window.location.href = '/login'
     }
     return Promise.reject(error)
